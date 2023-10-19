@@ -3,32 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/devmarciosieto/Client-Server-API/server/internal/dto"
 	"io"
 	"net/http"
 	"os"
 )
-
-type ApiResponse struct {
-	USDBRL USDBRL `json:"USDBRL"`
-}
-
-type USDBRL struct {
-	Code        string `json:"code"`
-	Codein      string `json:"codein"`
-	Name        string `json:"name"`
-	High        string `json:"high"`
-	Low         string `json:"low"`
-	VarBid      string `json:"varBid"`
-	PctChange   string `json:"pctChange"`
-	Bid         string `json:"bid"`
-	Ask         string `json:"ask"`
-	Timestamp   string `json:"timestamp"`
-	Create_date string `json:"create_date"`
-}
-
-type USDBRLResponse struct {
-	Bid string `json:"bid"`
-}
 
 func BuscaCotacaoUSDBRL(w http.ResponseWriter, r *http.Request) {
 
@@ -38,7 +17,7 @@ func BuscaCotacaoUSDBRL(w http.ResponseWriter, r *http.Request) {
 	}
 
 	createFile(err, response)
-	var res USDBRLResponse
+	var res dto.USDBRLResponse
 	res.Bid = response.USDBRL.Bid
 
 	w.Header().Set("Content-Type", "application/json")
@@ -46,7 +25,7 @@ func BuscaCotacaoUSDBRL(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(res)
 }
 
-func createFile(err error, response *ApiResponse) {
+func createFile(err error, response *dto.ApiResponse) {
 	file, err := os.Create("cotacao.txt")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Erro ao criar arquivo: %v\n", err)
@@ -55,7 +34,7 @@ func createFile(err error, response *ApiResponse) {
 	_, err = file.WriteString(fmt.Sprintf("Dólar: %s\n", response.USDBRL.Bid))
 }
 
-func BuscaCotacao() (*ApiResponse, error) {
+func BuscaCotacao() (*dto.ApiResponse, error) {
 	req, err := http.Get("https://economia.awesomeapi.com.br/json/last/USD-BRL")
 	if err != nil {
 		return nil, err
@@ -66,7 +45,7 @@ func BuscaCotacao() (*ApiResponse, error) {
 		return nil, err
 	}
 
-	var response ApiResponse
+	var response dto.ApiResponse
 	err = json.Unmarshal(res, &response)
 
 	if err != nil {
