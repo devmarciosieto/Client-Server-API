@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/devmarciosieto/Client-Server-API/server/internal/dto"
+	"github.com/devmarciosieto/Client-Server-API/server/storage"
 	"io"
 	"net/http"
-	"os"
 )
 
 func BuscaCotacaoUSDBRL(w http.ResponseWriter, r *http.Request) {
@@ -16,22 +16,14 @@ func BuscaCotacaoUSDBRL(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 
-	createFile(err, response)
+	storage.CreateFile(response)
+
 	var res dto.USDBRLResponse
 	res.Bid = response.USDBRL.Bid
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(res)
-}
-
-func createFile(err error, response *dto.ApiResponse) {
-	file, err := os.Create("cotacao.txt")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Erro ao criar arquivo: %v\n", err)
-	}
-	defer file.Close()
-	_, err = file.WriteString(fmt.Sprintf("Dólar: %s\n", response.USDBRL.Bid))
 }
 
 func BuscaCotacao() (*dto.ApiResponse, error) {
