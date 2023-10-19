@@ -26,6 +26,10 @@ type USDBRL struct {
 	Create_date string `json:"create_date"`
 }
 
+type USDBRLResponse struct {
+	Bid string `json:"bid"`
+}
+
 func BuscaCotacaoUSDBRL(w http.ResponseWriter, r *http.Request) {
 
 	response, err := BuscaCotacao()
@@ -34,9 +38,12 @@ func BuscaCotacaoUSDBRL(w http.ResponseWriter, r *http.Request) {
 	}
 
 	createFile(err, response)
+	var res USDBRLResponse
+	res.Bid = response.USDBRL.Bid
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(response)
+	json.NewEncoder(w).Encode(res)
 }
 
 func createFile(err error, response *ApiResponse) {
