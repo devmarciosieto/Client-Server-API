@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"github.com/devmarciosieto/Client-Server-API/server/internal/dto"
 	"github.com/devmarciosieto/Client-Server-API/server/service"
-	"github.com/devmarciosieto/Client-Server-API/server/storage"
 	"net/http"
 )
 
@@ -14,8 +13,6 @@ func BuscaCotacaoUSDBRL(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
-
-	storage.CreateFile(response)
 
 	var res dto.USDBRLResponse
 	res.Bid = response.USDBRL.Bid
