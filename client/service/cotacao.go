@@ -7,6 +7,7 @@ import (
 	"github.com/devmarciosieto/Client-Server-API/client/internal/dto"
 	"github.com/devmarciosieto/Client-Server-API/client/storage"
 	"io"
+	"log"
 	"net/http"
 	"time"
 )
@@ -25,6 +26,9 @@ func BuscaCotacao() (*dto.USDBRLRequest, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
+		if ctx.Err() == context.DeadlineExceeded {
+			log.Fatal("timeout exceeded 300 milliseconds")
+		}
 		return nil, err
 	}
 	defer resp.Body.Close()

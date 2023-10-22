@@ -21,9 +21,18 @@ func BuscaCotacaoUSDBRL(w http.ResponseWriter, r *http.Request) {
 
 	response, err := service.BuscaCotacao(ctx)
 	if err != nil {
-		log.Printf("Erro ao buscar cotação: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
+	}
+
+	select {
+	case <-ctx.Done():
+		if ctx.Err() == context.DeadlineExceeded {
+			log.Println("Timeout de 200ms atingido ao buscar cotação")
+			w.WriteHeader(http.StatusRequestTimeout)
+			return
+		}
+	default:
 	}
 
 	if response == nil {
