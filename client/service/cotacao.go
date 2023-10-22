@@ -13,12 +13,6 @@ import (
 
 func BuscaCotacao() (*dto.USDBRLRequest, error) {
 
-	// Essa parte do código era outra forma de limitar
-	//o tempo de resposta da requisição
-
-	//rq := http.Client{Timeout: time.Millisecond * 300}
-	//req, err := rq.Get("http://localhost:8080/cotacao")
-
 	ctx := context.Background()
 	ctx, cancel := context.WithTimeout(ctx, time.Millisecond*300)
 	defer cancel()
