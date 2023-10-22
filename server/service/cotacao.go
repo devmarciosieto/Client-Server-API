@@ -4,7 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/devmarciosieto/Client-Server-API/server/internal/domain/entity"
 	"github.com/devmarciosieto/Client-Server-API/server/internal/dto"
+	"github.com/devmarciosieto/Client-Server-API/server/internal/infra/database"
 	"io"
 	"net/http"
 )
@@ -35,6 +37,14 @@ func BuscaCotacao(ctx context.Context) (*dto.ApiResponse, error) {
 
 	var response dto.ApiResponse
 	err = json.Unmarshal(res, &response)
+
+	if err != nil {
+		return nil, err
+	}
+
+	db := database.NewDb()
+	repo := database.NewUSDBRLRepository(db)
+	err = repo.InsertUSDBRL(entity.NewUSDBRL(response.USDBRL.Code, response.USDBRL.Codein, response.USDBRL.Name, response.USDBRL.High, response.USDBRL.Low, response.USDBRL.VarBid, response.USDBRL.PctChange, response.USDBRL.Bid, response.USDBRL.Ask, response.USDBRL.Timestamp, response.USDBRL.Create_date))
 
 	if err != nil {
 		return nil, err
