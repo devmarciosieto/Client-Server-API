@@ -1,0 +1,29 @@
+* {
+    background-color: rgb(28,28,28);
+    color: white;
+}
+
+div {
+    text-align: center;
+    margin: 40px;
+}
+
+button {
+    background-color: rgb(255,205,1);
+    color: black;
+    border: none;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px;
+    font-size: 20px;
+}
+
+img {
+    max-height: 100px;
+    max-width: 100px;
+    margin: 30px;
+}
+
+p {
+    margin: 50px;
+}
