@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"github.com/devmarciosieto/Client-Server-API/server/internal/domain/entity"
 	"gorm.io/gorm"
 )
@@ -9,8 +10,8 @@ type USDBRLRepository struct {
 	Db *gorm.DB
 }
 
-func NewUSDBRLRepository(db *gorm.DB) *USDBRLRepository {
-	return &USDBRLRepository{Db: db}
+func NewUSDBRLRepository(ctx context.Context, db *gorm.DB) *USDBRLRepository {
+	return &USDBRLRepository{Db: db.WithContext(ctx)}
 }
 
 func (u *USDBRLRepository) InsertUSDBRL(usdbrl *entity.USDBRL) error {

@@ -8,7 +8,9 @@ import (
 	"github.com/devmarciosieto/Client-Server-API/server/internal/dto"
 	"github.com/devmarciosieto/Client-Server-API/server/internal/infra/database"
 	"io"
+	"log"
 	"net/http"
+	"time"
 )
 
 func BuscaCotacao(ctx context.Context) (*dto.ApiResponse, error) {
@@ -43,7 +45,17 @@ func BuscaCotacao(ctx context.Context) (*dto.ApiResponse, error) {
 	}
 
 	db := database.NewDb()
-	repo := database.NewUSDBRLRepository(db)
+
+	ctxWithTimeout, cancel := context.WithTimeout(ctx, 10*time.Millisecond)
+	//ctxWithTimeout, cancel := context.WithTimeout(ctx, 1*time.Nanosecond)
+	defer cancel()
+
+	if ctxWithTimeout.Err() == context.DeadlineExceeded {
+		log.Println("database context canceled")
+
+	}
+
+	repo := database.NewUSDBRLRepository(ctxWithTimeout, db)
 	err = repo.InsertUSDBRL(entity.NewUSDBRL(response.USDBRL.Code, response.USDBRL.Codein, response.USDBRL.Name, response.USDBRL.High, response.USDBRL.Low, response.USDBRL.VarBid, response.USDBRL.PctChange, response.USDBRL.Bid, response.USDBRL.Ask, response.USDBRL.Timestamp, response.USDBRL.Create_date))
 
 	if err != nil {
